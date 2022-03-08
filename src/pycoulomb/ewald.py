@@ -68,11 +68,11 @@ class Ewald:
         self.epsilon = epsilon
 
     def _rho_reciprocal_sq(self, kvec):
-        kpos = self.positions @ kvec
+        kpos = np.atleast_2d(kvec @ self.positions.T)
 
         reals = self.charges * np.cos(kpos)
         imags = self.charges * np.sin(kpos)
-        return np.sum(reals)**2 + np.sum(imags)**2
+        return np.sum(reals, axis=1)**2 + np.sum(imags, axis=1)**2
 
     def _calculate_energy_real(self):
         """Real part of the ewald energy."""
@@ -93,25 +93,22 @@ class Ewald:
 
     def _calculate_energy_reciprocal(self):
         """Reciprocal part of the ewald energy."""
-
         r_n = np.arange(-self.n_kvecs, self.n_kvecs + 1)
         kvecs = np.array(np.meshgrid(r_n, r_n, r_n),
                          dtype=float).T.reshape(-1, 3)
+        # Remove k = (0, 0, 0) vector
+        kvecs = np.array([i for i in kvecs if np.any(i != (0, 0, 0))])
         kvecs *= 2 * np.pi / self.L
 
         logger.debug(f"kvector shape = {kvecs.shape}")
 
-        self.energy_reciprocal = 0
-        for k in kvecs:
-            if np.all(k == [0, 0, 0]):
-                continue
-            k_sq = np.linalg.norm(k)**2
-            energy_temp = 4 * np.pi / k_sq
-            energy_temp *= np.exp(-k_sq / (4 * self.alpha**2))
-            energy_temp *= self._rho_reciprocal_sq(k)
-            self.energy_reciprocal += energy_temp
+        k_sq = np.linalg.norm(kvecs, axis=1)**2
 
-        self.energy_reciprocal /= 2 * self.L**3
+        energy_temp = np.exp(-k_sq / (4 * self.alpha**2)) / k_sq
+        energy_temp *= self._rho_reciprocal_sq(kvecs)
+
+        self.energy_reciprocal = np.sum(energy_temp)
+        self.energy_reciprocal *= 2 * np.pi / self.L**3
         logger.debug(f"reciprocal = {self.energy_reciprocal:.2e}")
 
     def _calculate_energy_self(self):
