@@ -28,7 +28,7 @@ madelung_3d = 2.837297 / 2
                          [(positions_nacl, charges_nacl, madelung_nacl),
                           (positions_cscl, charges_cscl, madelung_cscl),
                           (positions_3d, charges_3d, madelung_3d)])
-def test_madelungt(positions, charges, madelung):
+def test_madelung(positions, charges, madelung):
     """Test Ewald summation for calculating Madelung constant."""
 
     ewald = Ewald(positions=positions,

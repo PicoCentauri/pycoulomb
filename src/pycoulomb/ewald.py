@@ -142,7 +142,7 @@ class Ewald:
         self.dimensions = np.array([self.L, self.L, self.L, 90, 90, 90])
 
         if self._r_cutoff is None:
-            self.r_cutoff = self.L / 2
+            self.r_cutoff = np.sqrt(3) / 2 * self.L
         else:
             self.r_cutoff = self._r_cutoff
 

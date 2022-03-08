@@ -11,15 +11,12 @@ logger = logging.getLogger(__name__)
 
 class Direct:
 
-    def __init__(self,
-                 positions,
-                 charges,
-                 L,
-                 r_cutoff=None):
+    def __init__(self, positions, charges, L, r_cutoff=None):
         """
         Calculate energy of point charge distribution based on a direct sum.
 
-        Calculations are preformed in the CGS system.
+        Only charges in the first unit cell are taken into account and
+        no preiodic images. Calculations are preformed in the CGS system.
 
         Paramters
         ---------
@@ -65,7 +62,7 @@ class Direct:
         self.dimensions = np.array([self.L, self.L, self.L, 90, 90, 90])
 
         if self._r_cutoff is None:
-            self.r_cutoff = self.L / 2
+            self.r_cutoff = np.sqrt(3) / 2 * self.L
         else:
             self.r_cutoff = self._r_cutoff
 
