@@ -1,0 +1,13 @@
+graft src
+
+include *.rst
+include LICENSE
+
+exclude tox.ini
+
+prune tests
+prune examples
+
+global-exclude *.py[cod] __pycache__/* *.so *.dylib 
+global-exclude tags
+global-exclude *.swp

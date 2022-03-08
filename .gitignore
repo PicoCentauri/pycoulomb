@@ -1,0 +1,32 @@
+*.so
+/*.egg-info
+*.pyc
+__pycache__
+/build
+/dist
+*.DS_store
+*.npz
+*.dat
+*.npy
+*.xvg
+*.egg-info
+.duecredit.p
+.swp
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# editors and IDEs
+*.sw[a-z]
+*~
+.idea
+.vscode
