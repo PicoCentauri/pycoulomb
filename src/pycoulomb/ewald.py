@@ -17,8 +17,8 @@ class Ewald:
                  charges,
                  L,
                  r_cutoff=None,
-                 alpha=5,
-                 n_kvecs=10,
+                 alpha=10,
+                 n_kvecs=20,
                  epsilon=None):
         """
         Calculate total energy of point charge distribution based on Ewald sum.
