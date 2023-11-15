@@ -1,5 +1,60 @@
 [build-system]
-# These are the assumed default build requirements from pip:
-# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
-requires = ["setuptools>=43.0.0", "wheel"]
+requires = [
+    "setuptools",
+    "wheel",
+]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pycoulomb"
+description = "Python Implementation for Coulomb interactions"
+authors = [
+    {name = "Philip Loche", email="philip.loche@posteo.de"},
+]
+readme = "README.rst"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+keywords = ["Ewald", "Coulomb"]
+
+dependencies = [
+    "MDAnalysis",
+    "numpy",
+    "scipy",
+]
+dynamic = ["version"]
+
+
+[project.urls]
+repository = "https://github.com/pypa/picocentauri/pycoulomb/"
+issues = "https://github.com/picocentauri/pycoulomb/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "pycoulomb.__version__"}
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+
+[tool.isort]
+skip = "__init__.py"
+profile = "black"
+line_length = 88
+indent = 4
+include_trailing_comma = true
+lines_after_imports = 2
+known_first_party = "pycoulomb"

@@ -4,22 +4,17 @@
 import logging
 
 import numpy as np
-from scipy.special import erfc
 from MDAnalysis.lib.distances import capped_distance
+from scipy.special import erfc
+
 
 logger = logging.getLogger(__name__)
 
 
 class Ewald:
-
-    def __init__(self,
-                 positions,
-                 charges,
-                 L,
-                 r_cutoff=None,
-                 alpha=10,
-                 n_kvecs=20,
-                 epsilon=None):
+    def __init__(
+        self, positions, charges, L, r_cutoff=None, alpha=10, n_kvecs=20, epsilon=None
+    ):
         """
         Calculate total energy of point charge distribution based on Ewald sum.
 
@@ -72,16 +67,18 @@ class Ewald:
 
         reals = self.charges * np.cos(kpos)
         imags = self.charges * np.sin(kpos)
-        return np.sum(reals, axis=1)**2 + np.sum(imags, axis=1)**2
+        return np.sum(reals, axis=1) ** 2 + np.sum(imags, axis=1) ** 2
 
     def _calculate_energy_real(self):
         """Real part of the ewald energy."""
-        pairs, r_ij = capped_distance(self.positions,
-                                      self.positions,
-                                      min_cutoff=0,
-                                      max_cutoff=self.r_cutoff,
-                                      box=self.dimensions,
-                                      return_distances=True)
+        pairs, r_ij = capped_distance(
+            self.positions,
+            self.positions,
+            min_cutoff=0,
+            max_cutoff=self.r_cutoff,
+            box=self.dimensions,
+            return_distances=True,
+        )
 
         q_i_q_j = np.zeros(len(pairs))
         for i, pair in enumerate(pairs):
@@ -94,15 +91,14 @@ class Ewald:
     def _calculate_energy_reciprocal(self):
         """Reciprocal part of the ewald energy."""
         r_n = np.arange(-self.n_kvecs, self.n_kvecs + 1)
-        kvecs = np.array(np.meshgrid(r_n, r_n, r_n),
-                         dtype=float).T.reshape(-1, 3)
+        kvecs = np.array(np.meshgrid(r_n, r_n, r_n), dtype=float).T.reshape(-1, 3)
         # Remove k = (0, 0, 0) vector
         kvecs = np.array([i for i in kvecs if np.any(i != (0, 0, 0))])
         kvecs *= 2 * np.pi / self.L
 
         logger.debug(f"kvector shape = {kvecs.shape}")
 
-        k_sq = np.linalg.norm(kvecs, axis=1)**2
+        k_sq = np.linalg.norm(kvecs, axis=1) ** 2
 
         energy_temp = np.exp(-k_sq / (4 * self.alpha**2)) / k_sq
         energy_temp *= self._rho_reciprocal_sq(kvecs)
@@ -119,17 +115,15 @@ class Ewald:
         logger.debug(f"self = {self.energy_self:.2e}")
 
     def _calculate_energy_dipole(self):
-        """Dipole correction to the Ewald energy.
-        """
-        qpos = np.linalg.norm(self.positions * self.charges[:, None])**2
+        """Dipole correction to the Ewald energy."""
+        qpos = np.linalg.norm(self.positions * self.charges[:, None]) ** 2
         self.energy_dipole = 2 * np.pi / (1 + self.epsilon) / self.L**3
         self.energy_dipole *= qpos
 
         logger.debug(f"dipole = {self.energy_dipole:.2e}")
 
     def _calculate_energy_neutralization(self):
-        """Correction if system has a finite net charge.
-        """
+        """Correction if system has a finite net charge."""
         self.energy_neutralization = -np.pi / (2 * self.alpha**2 * self.L**3)
         self.energy_neutralization *= self.total_charge**2
 

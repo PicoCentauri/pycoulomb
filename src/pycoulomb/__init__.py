@@ -5,5 +5,5 @@ from .direct import Direct
 from .ewald import Ewald
 
 __all__ = ["Direct", "Ewald"]
-__version__ = '0.0.0'
-__author__ = 'Philip Loche'
+__version__ = "0.0.0"
+__author__ = "Philip Loche"

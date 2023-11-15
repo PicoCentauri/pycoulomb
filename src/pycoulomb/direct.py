@@ -6,11 +6,11 @@ import logging
 import numpy as np
 from MDAnalysis.lib.distances import capped_distance
 
+
 logger = logging.getLogger(__name__)
 
 
 class Direct:
-
     def __init__(self, positions, charges, L, r_cutoff=None):
         """
         Calculate energy of point charge distribution based on a direct sum.
@@ -41,12 +41,14 @@ class Direct:
 
     def _calculate_energy_real(self):
         """Calculate energy."""
-        pairs, r_ij = capped_distance(self.positions,
-                                      self.positions,
-                                      min_cutoff=0,
-                                      max_cutoff=self.r_cutoff,
-                                      box=self.dimensions,
-                                      return_distances=True)
+        pairs, r_ij = capped_distance(
+            self.positions,
+            self.positions,
+            min_cutoff=0,
+            max_cutoff=self.r_cutoff,
+            box=self.dimensions,
+            return_distances=True,
+        )
 
         q_i_q_j = np.zeros(len(pairs))
         for i, pair in enumerate(pairs):
